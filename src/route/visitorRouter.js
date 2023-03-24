@@ -22,7 +22,7 @@ visitorRouter.get("/", async (req, res) => {
     let cardsCount = await cardModel.find(req.body).count();
     let collectionsCount = await collectionModel.find(req.body).count();
     let bestUser = await userModel.find(req.body).limit(10);
-    let cardDiscovery = await cardModel.find(req.body).limit(3);
+    let cardDiscovery = await cardModel.find(req.body).limit(5);
     let collections = await collectionModel.find(req.body).limit(4);
     let bestCard = await cardModel.find(req.body).limit(1); 
    // let cards = await cardModel.find({ users: { $in: users.map(user => user.id) } });
