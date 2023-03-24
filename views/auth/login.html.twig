@@ -1,0 +1,42 @@
+{% extends "base.html.twig" %}
+
+{% block title %}
+	<title>Collect7 - Login</title>
+{% endblock %}
+
+
+{% block body %}
+	<!-- login form -->
+	<div class="login-area rn-section-gapTop">
+		<div class="container">
+			<div class="row g-5">
+				<div class=" offset-2 col-lg-4 col-md-6 ml_md--0 ml_sm--0 col-sm-12">
+					<div class="form-wrapper-one">
+						<h4>Login</h4>
+								{% if alert is defined %}
+								<div class="alert alert-warning alert-dismissible fade show" role="alert">
+									{{ alert }}
+								</div>
+						{% endif %}
+						<form action="/login" method="post">
+							<div class="mb-5">
+								<label for="exampleInputEmail1" class="form-label">Email address</label>
+								<input type="text" id="exampleInputEmail1" name="email">
+							</div>
+							<div class="mb-5">
+								<label for="exampleInputPassword1" class="form-label">Password</label>
+								<input type="password" id="exampleInputPassword1" name="password">
+							</div>
+							<button type="submit" class="btn btn-primary mr--15">Log In</button>
+							<a href="/register" class="btn">Sign Up</a>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- login form end -->
+
+{% endblock %}
+
+{% block footer %}{% endblock %}

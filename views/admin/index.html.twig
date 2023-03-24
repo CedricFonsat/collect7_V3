@@ -1,0 +1,180 @@
+{% extends "base.html.twig" %}
+
+
+{% block body %}
+	    <!-- start page title area -->
+    <div class="rn-breadcrumb-inner ptb--30">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6 col-md-6 col-12">
+                    <h5 class="title text-center text-md-start">Crete Collection</h5>
+                </div>
+                <div class="col-lg-6 col-md-6 col-12">
+                    <ul class="breadcrumb-list">
+                        <li class="item"><a href="index.html">Home</a></li>
+                        <li class="separator"><i class="feather-chevron-right"></i></li>
+                        <li class="item current">Crete Collection</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- end page title area -->
+
+<form action="/admin" method="post" enctype="multipart/form-data">
+    <!-- start Create Collection -->
+    <div class="creat-collection-area pt--80">
+        <div class="container">
+            <div class="row g-5 ">
+                <div class="col-lg-3 offset-1 ml_md--0 ml_sm--0">
+                    <div class="collection-single-wized banner">
+                        <label class="title required">Logo image</label>
+
+                        <div class="create-collection-input logo-image">
+                            <div class="logo-c-image logo">
+                                <img id="rbtinput1" src="assets/images/profile/profile-01.jpg" alt="Profile-NFT">
+                                <label for="fatima" title="No File Choosen">
+                                    <span class="text-center color-white"><i class="feather-edit"></i></span>
+                                </label>
+                            </div>
+                            <div class="button-area">
+                                <div class="brows-file-wrapper">
+                                    <!-- actual upload which is hidden -->
+                                    <input name="logo" id="fatima" type="file">
+                                    <!-- our custom upload button -->
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="collection-single-wized banner">
+                        <label class="title">Cover Image</label>
+                        <div class="create-collection-input feature-image">
+                            <div class="logo-c-image feature">
+                                <img id="rbtinput2" src="assets/images/profile/cover-04.png" alt="Profile-NFT">
+                                <label for="nipa" title="No File Choosen">
+                                    <span class="text-center color-white"><i class="feather-edit"></i></span>
+                                </label>
+                            </div>
+                            <div class="button-area">
+                                <div class="brows-file-wrapper">
+                                    <!-- actual upload which is hidden -->
+                                    <input name="cover" id="nipa" type="file">
+                                    <!-- our custom upload button -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="collection-single-wized banner">
+                        <label class="title">Featured image</label>
+                        <div class="create-collection-input feature-image">
+                            <div class="logo-c-image feature">
+                                <img id="createfileImage" src="assets/images/profile/cover-03.jpg" alt="Profile-NFT">
+                                <label for="createinputfile" title="No File Choosen">
+                                    <span class="text-center color-white"><i class="feather-edit"></i></span>
+                                </label>
+                            </div>
+                            <div class="button-area">
+                                <div class="brows-file-wrapper">
+                                    <!-- actual upload which is hidden -->
+                                    <input name="image" id="createinputfile" type="file">
+                                    <!-- our custom upload button -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+                </div>
+
+                <div class="col-lg-7">
+                    <div class="create-collection-form-wrapper">
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <div class="collection-single-wized">
+                                    <label for="name" class="title required">Name</label>
+                                    <div class="create-collection-input">
+                                        <input name="name" id="name" class="name" type="text" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="collection-single-wized">
+                                    <label for="earning" class="title">Author</label>
+                                    <div class="create-collection-input">
+                                        <input id="earning" class="url" type="text" name="author">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-12">
+                                 <div class="collection-single-wized">
+                                    <label for="earning" class="title">Category</label>
+                                    <div class="create-collection-input">
+                                        <input id="earning" class="url" type="text" name="category">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-12">
+                                <div class="collection-single-wized">
+                                    <label for="description" class="title">Description</label>
+                                    <div class="create-collection-input">
+                                        <textarea id="description" class="text-area" name="description"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-12">
+                                  <input type="checkbox"  name="ifVisible">
+                                        <div class="content-text">
+                                            <p>ifVisible</p>
+                                        </div>
+                            </div>
+                            <div class="col-lg-12">
+                                <div class="button-wrapper">
+                                    <!-- <a href="#" class="btn btn-primary btn-large mr--30" data-bs-toggle="modal" data-bs-target="#collectionModal">Preview</a> -->
+                                    <button type="submit" class="btn btn-primary-alta btn-large">Create</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Create Collection -->
+</form>
+
+    <!-- Modal -->
+    <div class="rn-popup-modal upload-modal-wrapper modal fade" id="collectionModal" tabindex="-1" aria-hidden="true">
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"><i data-feather="x"></i></button>
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content share-wrapper">
+                <div class="modal-body">
+                    <a href="product-details.html" class="rn-collection-inner-one">
+                        <div class="collection-wrapper">
+                            <div class="collection-big-thumbnail">
+                                <img src="assets/images/collection/collection-lg-01.jpg" alt="Nft_Profile">
+                            </div>
+                            <div class="collenction-small-thumbnail">
+                                <img src="assets/images/collection/collection-sm-01.jpg" alt="Nft_Profile">
+                                <img src="assets/images/collection/collection-sm-02.jpg" alt="Nft_Profile">
+                                <img src="assets/images/collection/collection-sm-03.jpg" alt="Nft_Profile">
+                            </div>
+                            <div class="collection-profile">
+                                <img src="assets/images/client/client-15.png" alt="Nft_Profile">
+                            </div>
+                            <div class="collection-deg">
+                                <h6 class="title">Cubic Trad</h6>
+                                <span class="items">27 Items</span>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+
