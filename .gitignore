@@ -8,5 +8,4 @@ coverage/
 .idea/
 *.iml
 .gitattributes
-assets/uploads/
 .env

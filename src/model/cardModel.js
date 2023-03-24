@@ -1,6 +1,6 @@
 import mongoose from 'mongoose'
 
-//const url = "https://i.stack.imgur.com/34AD2.jpg";
+const IMG = "/img/image.jpeg";
 
 const cardSchema = new mongoose.Schema({
     name: {
@@ -12,8 +12,8 @@ const cardSchema = new mongoose.Schema({
         required: [true, "Pas de prix de carte"]
     },
     image: {
-        type: String,
-        required: [true, "Pas d'image de carte"]
+        type:String,
+        default: IMG
     },
     collections: {
         type: [],

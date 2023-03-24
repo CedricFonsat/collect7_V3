@@ -34,8 +34,8 @@ adminRouter.post("/admin", uploadMultipleCollectionAdmin, async (req, res) => {
   adminRouter.get("/card", async (req, res) => {
     try {
         let collections = await collectionModel.find(req.body);
-        let card = await cardModel.find(req.body);
-        console.log(card.image);
+        // let card = await cardModel.find(req.body);
+        // console.log(card.image);
         res.render("admin/card.html.twig",{
             collections: collections
         });
