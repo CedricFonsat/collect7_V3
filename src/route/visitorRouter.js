@@ -94,7 +94,7 @@ visitorRouter.post("/login", async (req, res) => {
     let user = await userController.setLogin(req, res)
     if (user) {
       req.session.user = user._id
-      res.redirect("/account");
+      res.redirect("/home");
     } else {
       const alert = ERROR_LOGIN;
       res.render("auth/login.html.twig",{

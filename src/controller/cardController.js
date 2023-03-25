@@ -4,11 +4,11 @@ import collectionModel from "../model/collectionModel.js";
 export class cardController {
 
     static async setAddCard(req) {
-        req.body.imageCard = req.file.filename;
-        console.log(req.body.categoryCard)
+        req.body.image = req.file.filename;
+        console.log(req.body.collections)
         let card = new cardModel(req.body)
         await card.save()
-        await collectionModel.updateOne({ _id: req.body.categoryCard }, { $push: { cards: card._id } })
+        await collectionModel.updateOne({ _id: req.body.collections }, { $push: { cards: card._id } })
     }
 }
 

@@ -18,11 +18,9 @@ const userSchema = new mongoose.Schema({
   },
   avatar: {
     type: String,
-    default: IMGAvatar
   },
   cover: {
     type: String,
-    default: IMGCover
   },
   cardsSold: {
     type: [],
