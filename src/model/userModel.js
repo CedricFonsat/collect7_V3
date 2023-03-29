@@ -6,11 +6,12 @@ const IMGCover = "/img/background.png";
 const userSchema = new mongoose.Schema({
   username: {
     type: String,
-    required: [true, "Pas de nom d'utilisateur"]
+    required: [true, "Pas de nom d'utilisateur"],
+    unique: true
   },
   email: {
     type: String,
-    required: [true, "Pas d'adresse Email"]
+    required: [true, "Pas d'adresse Email"],
   },
   password: {
     type: String,
@@ -18,9 +19,11 @@ const userSchema = new mongoose.Schema({
   },
   avatar: {
     type: String,
+    default: "avatar.svg"
   },
   cover: {
     type: String,
+    default: "background.png"
   },
   cardsSold: {
     type: [],

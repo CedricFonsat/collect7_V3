@@ -71,6 +71,7 @@ userRouter.get("/buyCard/:cardId", async (req,res) => {
 userRouter.get("/home", async (req, res) => {
   try {
     let cards = await cardModel.find();
+    console.log(cards);
     res.render("site/shop.html.twig",{
       cards: cards
     });
@@ -82,38 +83,39 @@ userRouter.get("/home", async (req, res) => {
 
 /* COMMUNAUTE */
 
-// userRouter.get("/community", async (req, res) => {
-//   try {
-//     let users = await userModel.find(req.body);
-//     let cards = await cardModel.find({ user: { $in: users.map(user => user.id) } });
-//     let userConnect = await userModel.findOne({ _id: req.session.user });
-//     let userCards = await userModel.find().populate("cards");
-//     res.render("pages/community.twig", {
-//       cards: cards,
-//       userConnect: userConnect,
-//       userCards: userCards
-//     });
-//   } catch (error) {
-//     res.send(error);
-//   }
-// });
+userRouter.get("/community", async (req, res) => {
+  try {
+    let users = await userModel.find(req.body);
+    let cards = await cardModel.find({ users: { $in: users.map(user => user.id) } });
+  //  let userConnect = await userModel.findOne({ _id: req.session.user });
+    let userCards = await userModel.find().populate("cards");
+    res.render("site/community.html.twig", {
+      cards: cards,
+     // userConnect: userConnect,
+      userCards: userCards
+    });
+  } catch (error) {
+    res.send(error);
+  }
+});
 
 
 /* CLASSEMENT */
 
-// userRouter.get("/ranking", async (req, res) => {
-//   try {
-//     const users = await userModel.find().limit(8);
-//     users.sort((a, b) => b.cards.length - a.cards.length);
-//     let userConnect = await userModel.findOne({ _id: req.session.user });
-//     res.render("pages/ranking.twig", {
-//       userConnect: userConnect,
-//       users: users
-//     });
-//   } catch (error) {
-//     res.send(error);
-//   }
-// });
+userRouter.get("/ranking", async (req, res) => {
+  try {
+    const users = await userModel.find().populate('cards');
+    users.sort((a, b) => b.cards.length - a.cards.length);
+   
+  //  let userConnect = await userModel.findOne({ _id: req.session.user });
+    res.render("site/ranking.html.twig", {
+    //  userConnect: userConnect,
+      users: users
+    });
+  } catch (error) {
+    res.send(error);
+  }
+});
 
 
 /* ACCOUNT */
@@ -171,23 +173,6 @@ userRouter.post('/account/update/:id', uploadAvatar.fields([{ name: 'avatar', ma
 });
 
 
-// userRouter.post('/account/update/:id', uploadAvatar.fields([{ name: 'avatar', maxCount: 1 }, { name: 'cover', maxCount: 1 }]), async (req, res) => {
-//   try {
-//     if (req.files) {
-//       req.body.avatar = req.files['avatar'][0].filename;
-//       req.body.cover = req.files['cover'][0].filename;
-//     }
-
-//     await userModel.updateOne({ _id: req.params.id }, req.body);
-//     res.redirect('/account');
-//   } catch (error) {
-//     res.send(error);
-//   }
-// });
-
-
-
-
 // userRouter.get("/account/:id", async (req, res) => {
 //   try {
 //     let user = await userModel.findOne({ _id: req.params.id }, req.body);
@@ -203,23 +188,6 @@ userRouter.post('/account/update/:id', uploadAvatar.fields([{ name: 'avatar', ma
 //     res.send(error);
 //   }
 // });
-
-// userRouter.get('/users', async (req, res) => {
-//   try {
-//     let users = await userModel.findOne({ _id: req.params.id }, req.body);
-//     let userConnect = await userModel.findOne({ _id: req.session.user });
-//     res.render("pages/users.twig", {
-//       users: users,
-//       userConnect: userConnect
-//     });
-//   } catch (error) {
-//     res.send(error);
-//   }
-// });
-
-
-
-
 
 
 // userRouter.get("/buy/:cardId", async (res) => {
