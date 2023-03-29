@@ -2,8 +2,9 @@ import { Router } from "express";
 import userModel from "../model/userModel.js";
 import collectionModel from "../model/collectionModel.js";
 import cardModel from "../model/cardModel.js";
-import { uploadAvatar } from "../service/multer.js";
-import userController from "../controller/userController.js"
+import { uploadAvatarCover } from "../service/multer.js";
+import userController from "../controller/userController.js";
+import uploadAvatar from "../service/avatar.js";
 
 const userRouter = Router();
 
@@ -11,39 +12,69 @@ const userRouter = Router();
 
 /* EN VENTE */
 
-// userRouter.get("/sell/:cardId", async (req, res) => {
-//   await cardModel.updateOne(
-//     { _id: req.params.cardId },
-//     { ifAvalaible: 1 }
-//   );
-//   res.redirect("/account");
-// })
+userRouter.get("/sell/:cardId", async (req, res) => {
+  await cardModel.updateOne(
+    { _id: req.params.cardId },
+    { ifAvalaible: 1 }
+  );
+  res.redirect("/account");
+})
 
-// userRouter.get("/removeSale/:cardId", async (req, res) => {
-//   await cardModel.updateOne(
-//     { _id: req.params.cardId },
-//     { ifAvalaible: 0 }
-//   );
-//   res.redirect("/account");
-// })
+userRouter.get("/removeSale/:cardId", async (req, res) => {
+  await cardModel.updateOne(
+    { _id: req.params.cardId },
+    { ifAvalaible: 0 }
+  );
+  res.redirect("/account");
+})
 
 
 /* ACHAT CARTE COLLECTION */
 
-// userRouter.get("/buyCard/:cardId", async (res) => {
-//   try {
-//     await userController.buyCard()
-//   } catch (error) {
-//     res.send(error);
-//   }
-// });
+userRouter.get("/buyCard/:cardId", async (req,res) => {
+  try {
+    let userOnline = await userModel.findOne({ _id: req.session.user });
+    let cardSell = await cardModel.findOne({ _id: req.params.cardId });
+    let cashResult = userOnline.wallet - cardSell.price;
+    let adminID = await userModel.findOne({ _id: process.env.IDADMIN });
+    let adminCash = adminID.wallet + cardSell.price;
+    if (userOnline.wallet >= cardSell.price) {
+        await userModel.updateOne(
+            { _id: req.session.user },
+            { wallet: cashResult, $push: { cards: req.params.cardId } }
+        );
+        await userModel.updateOne(
+            { _id: process.env.IDADMIN },
+            { wallet: adminCash }
+        );
+        await cardModel.updateOne(
+            { _id: req.params.cardId },
+            { ifAvalaible: 0 }
+        );
+        await cardModel.updateOne(
+            { _id: req.params.cardId },
+            { $push: { user: userOnline.id } }
+        );
+        res.redirect("/home");
+        console.log('buy card');
+    } else if (userOnline.wallet < cardSell.price) {
+        res.redirect("/home");
+    }
+  } catch (error) {
+    res.send(error);
+  }
+});
 
 
 /* HOME */
 
 userRouter.get("/home", async (req, res) => {
   try {
-    await userController.getHome()
+    let cards = await cardModel.find();
+    console.log(cards);
+    res.render("site/shop.html.twig",{
+      cards: cards
+    });
   } catch (error) {
     res.send(error);
   }
@@ -52,53 +83,54 @@ userRouter.get("/home", async (req, res) => {
 
 /* COMMUNAUTE */
 
-// userRouter.get("/community", async (req, res) => {
-//   try {
-//     let users = await userModel.find(req.body);
-//     let cards = await cardModel.find({ user: { $in: users.map(user => user.id) } });
-//     let userConnect = await userModel.findOne({ _id: req.session.user });
-//     let userCards = await userModel.find().populate("cards");
-//     res.render("pages/community.twig", {
-//       cards: cards,
-//       userConnect: userConnect,
-//       userCards: userCards
-//     });
-//   } catch (error) {
-//     res.send(error);
-//   }
-// });
+userRouter.get("/community", async (req, res) => {
+  try {
+    let users = await userModel.find(req.body);
+    let cards = await cardModel.find({ users: { $in: users.map(user => user.id) } });
+  //  let userConnect = await userModel.findOne({ _id: req.session.user });
+    let userCards = await userModel.find().populate("cards");
+    res.render("site/community.html.twig", {
+      cards: cards,
+     // userConnect: userConnect,
+      userCards: userCards
+    });
+  } catch (error) {
+    res.send(error);
+  }
+});
 
 
 /* CLASSEMENT */
 
-// userRouter.get("/ranking", async (req, res) => {
-//   try {
-//     const users = await userModel.find().limit(8);
-//     users.sort((a, b) => b.cards.length - a.cards.length);
-//     let userConnect = await userModel.findOne({ _id: req.session.user });
-//     res.render("pages/ranking.twig", {
-//       userConnect: userConnect,
-//       users: users
-//     });
-//   } catch (error) {
-//     res.send(error);
-//   }
-// });
+userRouter.get("/ranking", async (req, res) => {
+  try {
+    const users = await userModel.find().populate('cards');
+    users.sort((a, b) => b.cards.length - a.cards.length);
+   
+  //  let userConnect = await userModel.findOne({ _id: req.session.user });
+    res.render("site/ranking.html.twig", {
+    //  userConnect: userConnect,
+      users: users
+    });
+  } catch (error) {
+    res.send(error);
+  }
+});
 
 
 /* ACCOUNT */
 
 userRouter.get("/account", async (req, res) => {
   try {
-    // let userCo = await userModel
-    //   .findOne({ _id: req.session.user })
-    //   .populate("cards");
-    // let cards = userCo.cards;
+    let userCo = await userModel
+    .findOne({ _id: req.session.user })
+    .populate("cards");
+  let cards = userCo.cards;
     let userConnect = await userModel.findOne({ _id: req.session.user });
     console.log(userConnect.id);
     res.render("user/account.html.twig", {
       userConnect: userConnect,
-      // cards: cards,
+      cards: cards,
     });
   } catch (error) {
     res.send(error);
@@ -120,18 +152,25 @@ userRouter.get("/account/update/:id", async (req, res) => {
   }
 });
 
+userRouter.post('/account/update/:id', uploadAvatar.fields([{ name: 'avatar', maxCount: 1 }, { name: 'cover', maxCount: 1 }]), async (req, res) => {
+  try {
+    const userId = req.params.id;
+    let update = {};
 
-// userRouter.post("/account/update/:id", uploadAvatar.single('avatar'), async (req, res) => {
-//   try {
-//     if (req.file) {
-//       req.body.avatar = req.file.filename;
-//     }
-//     await userModel.updateOne({ _id: req.params.id }, req.body);
-//     res.redirect('/account')
-//   } catch (error) {
-//     res.send(error);
-//   }
-// });
+    if (req.files['avatar']) {
+      update.avatar = req.files['avatar'][0].filename;
+    }
+
+    if (req.files['cover']) {
+      update.cover = req.files['cover'][0].filename;
+    }
+
+    await userModel.updateOne({ _id: userId }, update);
+    res.redirect('/account');
+  } catch (error) {
+    res.send(error);
+  }
+});
 
 
 // userRouter.get("/account/:id", async (req, res) => {
@@ -149,23 +188,6 @@ userRouter.get("/account/update/:id", async (req, res) => {
 //     res.send(error);
 //   }
 // });
-
-// userRouter.get('/users', async (req, res) => {
-//   try {
-//     let users = await userModel.findOne({ _id: req.params.id }, req.body);
-//     let userConnect = await userModel.findOne({ _id: req.session.user });
-//     res.render("pages/users.twig", {
-//       users: users,
-//       userConnect: userConnect
-//     });
-//   } catch (error) {
-//     res.send(error);
-//   }
-// });
-
-
-
-
 
 
 // userRouter.get("/buy/:cardId", async (res) => {

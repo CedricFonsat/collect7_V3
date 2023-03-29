@@ -1,5 +1,6 @@
 import userModel from "../model/userModel.js";
 import { cryptPassword, comparePassword } from "../service/bcrypt.js";
+import "dotenv/config";
 
 export class userController {
 
@@ -36,33 +37,10 @@ export class userController {
       return null
     }
 
+
+
     static async buyCard(req, res) {
-        let userOnline = await userModel.findOne({ _id: req.session.user });
-        let cardSell = await cardModel.findOne({ _id: req.params.cardId });
-        let cashResult = userOnline.wallet - cardSell.priceCard;
-        let adminID = await userModel.findOne({ _id: process.env.IDADMIN });
-        let adminCash = adminID.wallet + cardSell.priceCard;
-        if (userOnline.wallet >= cardSell.priceCard) {
-            await userModel.updateOne(
-                { _id: req.session.user },
-                { wallet: cashResult, $push: { cards: req.params.cardId } }
-            );
-            await userModel.updateOne(
-                { _id: process.env.IDADMIN },
-                { wallet: adminCash }
-            );
-            await cardModel.updateOne(
-                { _id: req.params.cardId },
-                { ifAvalaible: 0 }
-            );
-            await cardModel.updateOne(
-                { _id: req.params.cardId },
-                { $push: { user: userOnline.id } }
-            );
-            res.redirect("/collection");
-        } else if (userOnline.wallet < cardSell.priceCard) {
-            res.redirect("/collection");
-        }
+      
     }
 
     static async getHome(req, res) {

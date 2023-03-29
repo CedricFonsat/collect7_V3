@@ -60,23 +60,9 @@ const uploadMultipleCardAdmin = uploadCardAdmin.fields([{ name: 'logo', maxCount
     },
   });
   
-   //------------------------------------ Collections
 
-  const storageCollection = multer.diskStorage({
-    destination: function (req, file, callback) {
-      callback(null, "./assets/uploads/collections");
-    },
-    filename: function (req, file, callback) {
-      callback(null, Date.now() + file.originalname);
-    },
-  });
-  const uploadCollections = multer({
-    storage: storageCollection,
-    limits: {
-      fieldSize: 1024 * 1024 * 3,
-    },
-  });
 
+ 
 
   const storageAvatar = multer.diskStorage({
     destination: function (req, file, callback) {
@@ -86,16 +72,14 @@ const uploadMultipleCardAdmin = uploadCardAdmin.fields([{ name: 'logo', maxCount
       callback(null, Date.now() + file.originalname);
     },
   });
-  const uploadAvatar = multer({
-    storage: storageAvatar,
-    limits: {
-      fieldSize: 1024 * 1024 * 3,
-    },
-  });
+
+  const uploadAatar = multer({ storage: storageAvatar });
+
+  const uploadAvatarCover = uploadAatar.fields([{ name: 'avatar', maxCount: 1 },{ name: 'cover', maxCount: 1 }])
+
    
   export {uploadMultipleOverview}
   export {uploadCard}
-  export {uploadCollections}
-  export {uploadAvatar}
+  export {uploadAvatarCover}
   export {uploadMultipleCollectionAdmin}
   export {uploadMultipleCardAdmin}
