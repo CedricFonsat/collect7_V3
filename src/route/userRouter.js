@@ -71,9 +71,10 @@ userRouter.get("/buyCard/:cardId", async (req,res) => {
 userRouter.get("/home", async (req, res) => {
   try {
     let cards = await cardModel.find();
-    console.log(cards);
+    let userConnect = await userModel.findOne({ _id: req.session.user });
     res.render("site/shop.html.twig",{
-      cards: cards
+      cards: cards,
+      userConnect: userConnect
     });
   } catch (error) {
     res.send(error);
@@ -87,11 +88,11 @@ userRouter.get("/community", async (req, res) => {
   try {
     let users = await userModel.find(req.body);
     let cards = await cardModel.find({ users: { $in: users.map(user => user.id) } });
-  //  let userConnect = await userModel.findOne({ _id: req.session.user });
+     let userConnect = await userModel.findOne({ _id: req.session.user });
     let userCards = await userModel.find().populate("cards");
     res.render("site/community.html.twig", {
       cards: cards,
-     // userConnect: userConnect,
+      userConnect: userConnect,
       userCards: userCards
     });
   } catch (error) {
@@ -107,9 +108,9 @@ userRouter.get("/ranking", async (req, res) => {
     const users = await userModel.find().populate('cards');
     users.sort((a, b) => b.cards.length - a.cards.length);
    
-  //  let userConnect = await userModel.findOne({ _id: req.session.user });
+    let userConnect = await userModel.findOne({ _id: req.session.user });
     res.render("site/ranking.html.twig", {
-    //  userConnect: userConnect,
+    userConnect: userConnect,
       users: users
     });
   } catch (error) {
@@ -172,22 +173,21 @@ userRouter.post('/account/update/:id', uploadAvatar.fields([{ name: 'avatar', ma
   }
 });
 
-
-// userRouter.get("/account/:id", async (req, res) => {
-//   try {
-//     let user = await userModel.findOne({ _id: req.params.id }, req.body);
-//     let userConnect = await userModel.findOne({ _id: req.session.user });
-//     let userCards = await userModel.findOne({ _id: req.params.id }, req.body).populate("cards");
-//     let cards = userCards.cards;
-//     res.render("pages/user/user.twig", {
-//       user: user,
-//       cards: cards,
-//       userConnect: userConnect
-//     })
-//   } catch (error) {
-//     res.send(error);
-//   }
-// });
+userRouter.get("/account/:id", async (req, res) => {
+  try {
+    let user = await userModel.findOne({ _id: req.params.id }, req.body);
+    let userConnect = await userModel.findOne({ _id: req.session.user });
+    let userCards = await userModel.findOne({ _id: req.params.id }, req.body).populate("cards");
+    let cards = userCards.cards;
+    res.render("user/user.html.twig", {
+      user: user,
+      cards: cards,
+      userConnect: userConnect
+    })
+  } catch (error) {
+    res.send(error);
+  }
+});
 
 
 // userRouter.get("/buy/:cardId", async (res) => {
@@ -234,13 +234,46 @@ userRouter.post('/account/update/:id', uploadAvatar.fields([{ name: 'avatar', ma
 
 /* FOLLOW */
 
-// userRouter.get('/follow/:id', async () => { /* CONTROLLER */
-//   await userController.follow()
-// });
+userRouter.get('/follow/:id', async (req, res) => { /* CONTROLLER */
+       let ids = await userModel.findOne({ _id: req.params.id }, req.body);
+        let userConnect = await userModel.findOne({ _id: req.session.user });
+        const userId = userConnect.id;
+        userModel.findById(userId, (err, user) => {
+            if (err) throw err;
+            user.following.push(req.params.id);
+            user.save();
+            userModel.findById(req.params.id, (err, followedUser) => {
+                if (err) throw err;
+                followedUser.followers.push(userId);
+                followedUser.save();
+                res.redirect('/account/' + ids);
+            });
+        });
+});
 
-// userRouter.get('/unfollow/:id', async () => { /* CONTROLLER */
-//   await userController.unfollow()
-// });
+userRouter.get('/unfollow/:id', async (req, res) => { /* CONTROLLER */
+let ids = await userModel.findOne({ _id: req.params.id }, req.body);
+console.log(ids);
+let userConnect = await userModel.findOne({ _id: req.session.user });
+const userId = userConnect.id;
+userModel.findById(userId, (err, user) => {
+    if (err) throw err;
+    const index = user.following.indexOf(req.params.id);
+    if (index > -1) {
+        user.following.splice(index, 1);
+        user.save();
+    }
+    userModel.findById(req.params.id, (err, followedUser) => {
+        if (err) throw err;
+        const index = followedUser.followers.indexOf(userId);
+        if (index > -1) {
+            followedUser.followers.splice(index, 1);
+            followedUser.save();
+        }
+        res.redirect('/account/' + ids);
+    });
+});
+});
 
 
 export default userRouter;

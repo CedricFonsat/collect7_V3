@@ -79,43 +79,11 @@ export class userController {
     }
 
     static async follow(req, res) {
-        let ids = await userModel.findOne({ _id: req.params.id }, req.body);
-        let userConnect = await userModel.findOne({ _id: req.session.user });
-        const userId = userConnect.id;
-        userModel.findById(userId, (err, user) => {
-            if (err) throw err;
-            user.following.push(req.params.id);
-            user.save();
-            userModel.findById(req.params.id, (err, followedUser) => {
-                if (err) throw err;
-                followedUser.followers.push(userId);
-                followedUser.save();
-                res.redirect('/account/' + ids.id);
-            });
-        });
+   
     }
 
     static async unfollow(req, res) {
-        let ids = await userModel.findOne({ _id: req.params.id }, req.body);
-        let userConnect = await userModel.findOne({ _id: req.session.user });
-        const userId = userConnect.id;
-        userModel.findById(userId, (err, user) => {
-            if (err) throw err;
-            const index = user.following.indexOf(req.params.id);
-            if (index > -1) {
-                user.following.splice(index, 1);
-                user.save();
-            }
-            userModel.findById(req.params.id, (err, followedUser) => {
-                if (err) throw err;
-                const index = followedUser.followers.indexOf(userId);
-                if (index > -1) {
-                    followedUser.followers.splice(index, 1);
-                    followedUser.save();
-                }
-                res.redirect('/account/' + ids.id);
-            });
-        });
+     
     }
 
 }

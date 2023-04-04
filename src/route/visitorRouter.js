@@ -127,6 +127,23 @@ visitorRouter.get('/logout', function (req, res) {
 
 /* CONTACT */
 
+/* FA */
+visitorRouter.get("/faq", async (req, res) => {
+  try {
+    res.render("faq/privacy-policy.html.twig");
+  } catch (error) {
+    res.send(error);
+  }
+}); 
+
+
+
+
+
+
+
+
+
 
 
 export default visitorRouter;
