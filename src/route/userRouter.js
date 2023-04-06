@@ -167,12 +167,21 @@ userRouter.post('/account/update/:id', uploadAvatar.fields([{ name: 'avatar', ma
       update.cover = req.files['cover'][0].filename;
     }
 
+    if (req.body.username) {
+      update.username = req.body.username;
+    }
+
+    if (req.body.email) {
+      update.email = req.body.email;
+    }
+
     await userModel.updateOne({ _id: userId }, update);
     res.redirect('/account');
   } catch (error) {
     res.send(error);
   }
 });
+
 
 userRouter.get("/account/:id", async (req, res) => {
   try {
