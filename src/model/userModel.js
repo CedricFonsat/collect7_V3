@@ -20,8 +20,8 @@ const userSchema = new mongoose.Schema({
   },
   password: {
     type: String,
-    required: [true, "Pas de mot de passe"],
-    match: [passwordRegex, 'Adresse email invalide']
+   // required: [true, "Pas de mot de passe"],
+   // match: [passwordRegex, 'Adresse email invalide']
   },
   avatar: {
     type: String,
