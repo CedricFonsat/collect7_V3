@@ -6,10 +6,6 @@ import "dotenv/config";
 import visitorRouter from "./src/route/visitorRouter.js";
 import userRouter from "./src/route/userRouter.js";
 import adminRouter from "./src/route/adminRouter.js";
-import authRoutes from './src/route/auth.js'
-import passport from 'passport'
-
-import './src/strategies/google.js';
 
 const db = process.env.BDD_URL;
 const app = express();
@@ -26,11 +22,6 @@ app.use(cors());
 app.use(express.static("./assets"));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-
-app.use(passport.initialize());
-app.use(passport.session());
-
-app.use('/api/auth', authRoutes)
 app.use(router);
 router.use(visitorRouter);
 router.use(userRouter);
