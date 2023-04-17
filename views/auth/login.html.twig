@@ -23,8 +23,9 @@
 								<input type="text" id="exampleInputEmail1" name="email">
 							</div>
 							<div class="mb-5">
-								<label for="exampleInputPassword1" class="form-label">Password</label>
-								<input type="password" id="exampleInputPassword1" name="password">
+								<label for="password" class="form-label">Password</label>
+								<input type="password" id="password" name="password">
+								<button type="button" id="showPasswordButton">Afficher le mot de passe</button>
 							</div>
 							<button type="submit" class="btn btn-primary mr--15">Log In</button>
 							<a href="/register" class="btn">Sign Up</a>
@@ -35,4 +36,18 @@
 		</div>
 	</div>
 	<!-- login form end -->
+
+	<script>
+	   const showPasswordButton = document.getElementById('showPasswordButton');
+    const passwordInput = document.getElementById('password');
+    showPasswordButton.addEventListener('click', () => {
+      if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        showPasswordButton.textContent = 'Cacher le mot de passe';
+      } else {
+        passwordInput.type = 'password';
+        showPasswordButton.textContent = 'Afficher le mot de passe';
+      }
+    });
+	</script>
 {% endblock %}

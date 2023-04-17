@@ -5,6 +5,12 @@ import "dotenv/config";
 export class userController {
 
     static async setRegistration(req) {
+
+        // function validateMDP(mdp){
+        //     var Reg = new RegExp(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/);
+        //     return Reg.test(mdp);
+        // }
+
         let userPseudo= await userModel.findOne({username: req.body.username})
         if (userPseudo) {
             console.log(userPseudo);
@@ -23,34 +29,19 @@ export class userController {
     static async setLogin(req) {
         let userPseudo= await userModel.findOne({username: req.body.email})
         if (userPseudo) {
-            if ( comparePassword(req.body.password,userPseudo.password)) {
+            const authUsername = await comparePassword(req.body.password,userPseudo.password)
+            if (authUsername) {
                 return userPseudo
-            } 
+            } else console.log('error de login');
         }
         let userMail= await userModel.findOne({email: req.body.email})
-        if (userMail) {
-            if (comparePassword(req.body.password,userMail.password)) {
+       
+        if (userMail){
+            const authEmail = await comparePassword(req.body.password,userMail.password)
+            if (authEmail) {
                 return userMail
-            }
-
+            } else console.log('error de login');
         }
-      return null
-    }
-
-
-
-    static async buyCard(req, res) {
-      
-    }
-
-    static async getHome(req, res) {
-       // let cards = await cardModel.find();
-       // let userConnect = await userModel.findOne({ _id: req.session.user });
-        // let countCards = 0;
-        // for (let i = 0; i < cards.length; i++) {
-        //     cards[i].user == '' ? countCards += 1 : countCards += 0;
-        // }
-        res.render("site/shop.html.twig");
     }
 
     static async buy(req, res) {
@@ -78,13 +69,6 @@ export class userController {
         }
     }
 
-    static async follow(req, res) {
-   
-    }
-
-    static async unfollow(req, res) {
-     
-    }
 
 }
 

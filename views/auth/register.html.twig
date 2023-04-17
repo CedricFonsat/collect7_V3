@@ -19,28 +19,35 @@
 								</div>
 							{% endfor %}
 						{% endif %}
+						<p id="result"></p>
 						<form action="/register" method="post">
 							<div class="mb-5">
 								<label for="username" class="form-label">Username</label>
-								<input type="text" id="username" name="username">
+								<input type="text" id="username" name="username" pattern="[a-z0-9.-_]{4,20}" required>
 							</div>
 							<div class="mb-5">
 								<label for="email" class="form-label">Email address</label>
-								<input type="email" id="email" name="email">
+								<input type="email" id="email" name="email" required>
 							</div>
 							<div class="mb-5">
 								<label for="password" class="form-label">Create Password</label>
-								<input type="password" id="password" name="password">
+								<input type="password" id="password" name="password"
+								pattern="(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}"
+								 required>
+								<button type="button" id="showPasswordButton">Afficher le mot de passe</button>
 							</div>
 							<div class="mb-5">
-								<label for="exampleInputPassword1" class="form-label">Re Password</label>
-								<input type="password" id="exampleInputPassword1">
+								<label for="passwordRepeat" class="form-label">Re Password</label>
+								<input type="password" id="passwordRepeat"
+								pattern="(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}"
+								 required>
+								<button type="button" id="showPasswordButtonRepeat">Afficher le mot de passe</button>
 							</div>
 							<div class="mb-5 rn-check-box">
-								<input type="checkbox" class="rn-check-box-input" id="exampleCheck1">
+								<input type="checkbox" class="rn-check-box-input" id="exampleCheck1" required>
 								<label class="rn-check-box-label" for="exampleCheck1">Allow to all tearms & condition</label>
 							</div>
-							<button type="submit" class="btn btn-primary mr--15">Sign Up</button>
+							<button type="submit" class="btn btn-primary mr--15" id="buttonSignUp">Sign Up</button>
 							<a href="/login" class="btn">Log In</a>
 						</form>
 					</div>
@@ -49,4 +56,41 @@
 		</div>
 	</div>
 	<!-- login form end -->
+	  <script>
+    const showPasswordButton = document.getElementById('showPasswordButton');
+    const passwordInput = document.getElementById('password');
+    showPasswordButton.addEventListener('click', () => {
+      if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        showPasswordButton.textContent = 'Cacher le mot de passe';
+      } else {
+        passwordInput.type = 'password';
+        showPasswordButton.textContent = 'Afficher le mot de passe';
+      }
+    });
+
+	const showPasswordButtonRepeat = document.getElementById('showPasswordButtonRepeat');
+    const passwordInputRepeat = document.getElementById('passwordRepeat');
+    showPasswordButtonRepeat.addEventListener('click', () => {
+      if (passwordInputRepeat.type === 'password') {
+        passwordInputRepeat.type = 'text';
+        showPasswordButtonRepeat.textContent = 'Cacher le mot de passe';
+      } else {
+        passwordInputRepeat.type = 'password';
+        showPasswordButtonRepeat.textContent = 'Afficher le mot de passe';
+      }
+    });
+
+      const buttonSignUp = document.getElementById('buttonSignUp');
+	  buttonSignUp.addEventListener('click', () => {
+      const password = document.getElementById('password').value;
+      const confirmPassword = document.getElementById('passwordRepeat').value;
+      if (password === confirmPassword) {
+        document.getElementById('result').textContent = "Inscription réussie pour l'utilisateur " + username + ".";
+        // Code pour envoyer le formulaire au serveur ici
+      } else {
+        document.getElementById('result').textContent = "Les mots de passe ne correspondent pas.";
+      }
+    })
+  </script>
 {% endblock %}

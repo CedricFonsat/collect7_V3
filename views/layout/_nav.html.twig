@@ -22,8 +22,10 @@
                                  <li><a href="/account">Compte</a></li>
                             </ul>
                             <!-- End Mainmanu Nav -->
+                            <ul>
+                            <li>{{userConnect.wallet}} C7</li>
+                            </ul>
                         </nav>
-                        <p>{{userConnect.wallet}} C7</p>
                     </div>
                     {% else %}
                      <div class="logo-thumbnail logo-custom-css">
@@ -72,13 +74,13 @@
                   {% if userConnect %}
 					    <div class="setting-option header-btn rbt-site-header" id="rbt-site-header">
                         <div class="icon-box">
-							<a href="/logout">Se déconnecter <i data-feather="log-out"></i></a>
+							<a href="/logout">Se déconnecter</a>
                         </div>
                     </div>
 				  {% else %}
 				    <div class="setting-option header-btn rbt-site-header" id="rbt-site-header">
                         <div class="icon-box">
-							<a href="/login">Se connecter <i data-feather="log-in"></i></a>
+							<a href="/login">Se connecter</a>
                         </div>
                     </div>
 				  {% endif %}

@@ -69,19 +69,43 @@ userRouter.get("/buyCard/:cardId", async (req,res) => {
 
 /* HOME */
 
-userRouter.get("/home", async (req, res) => {
-  try {
-    let cards = await cardModel.find();
-    let userConnect = await userModel.findOne({ _id: req.session.user });
-    res.render("site/shop.html.twig",{
-      cards: cards,
-      userConnect: userConnect
-    });
-  } catch (error) {
-    res.send(error);
-  }
-});
 
+    userRouter.get("/home", async (req, res) => {
+      try {
+        let filter = {};
+        let priceSort = "";
+        let cards;
+    
+        // Filtrer les cartes par collection
+        if (req.query.collection) {
+          filter.collections = req.query.collection;
+        }
+    
+        // Filtrer les cartes par prix
+        // if (req.query.price) {
+        //   filter.price = { $lte: req.query.price };
+        // }
+
+        if (req.query.price_max) {
+         // priceSort = req.query.price_max;
+          cards = await cardModel.find(filter).sort({"price" : -1});
+        }
+
+        console.log(priceSort,"-------------------------");
+    
+        cards = await cardModel.find(filter)
+        let userConnect = await userModel.findOne({ _id: req.session.user });
+        let collectionA = await collectionModel.find();
+        res.render("site/shop.html.twig",{
+          cards: cards,
+          userConnect: userConnect,
+          collectionA: collectionA
+        });
+      } catch (error) {
+        res.send(error);
+      }
+    });
+    
 
 /* COMMUNAUTE */
 
