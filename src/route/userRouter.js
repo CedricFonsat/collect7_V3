@@ -42,6 +42,7 @@ userRouter.get("/buyCard/:cardId", async (req,res) => {
         await userModel.updateOne(
             { _id: req.session.user },
             { wallet: cashResult, $push: { cards: req.params.cardId } }
+            //$pull: { cards: req.params.cardId }
         );
         await userModel.updateOne(
             { _id: process.env.IDADMIN },
@@ -49,7 +50,7 @@ userRouter.get("/buyCard/:cardId", async (req,res) => {
         );
         await cardModel.updateOne(
             { _id: req.params.cardId },
-            { ifAvalaible: 0 }
+            { ifAvalaible: 1 }
         );
         await cardModel.updateOne(
             { _id: req.params.cardId },
@@ -68,19 +69,43 @@ userRouter.get("/buyCard/:cardId", async (req,res) => {
 
 /* HOME */
 
-userRouter.get("/home", async (req, res) => {
-  try {
-    let cards = await cardModel.find();
-    let userConnect = await userModel.findOne({ _id: req.session.user });
-    res.render("site/shop.html.twig",{
-      cards: cards,
-      userConnect: userConnect
-    });
-  } catch (error) {
-    res.send(error);
-  }
-});
 
+    userRouter.get("/home", async (req, res) => {
+      try {
+        let filter = {};
+        let priceSort = "";
+        let cards;
+    
+        // Filtrer les cartes par collection
+        if (req.query.collection) {
+          filter.collections = req.query.collection;
+        }
+    
+        // Filtrer les cartes par prix
+        // if (req.query.price) {
+        //   filter.price = { $lte: req.query.price };
+        // }
+
+        if (req.query.price_max) {
+         // priceSort = req.query.price_max;
+          cards = await cardModel.find(filter).sort({"price" : -1});
+        }
+
+        console.log(priceSort,"-------------------------");
+    
+        cards = await cardModel.find(filter)
+        let userConnect = await userModel.findOne({ _id: req.session.user });
+        let collectionA = await collectionModel.find();
+        res.render("site/shop.html.twig",{
+          cards: cards,
+          userConnect: userConnect,
+          collectionA: collectionA
+        });
+      } catch (error) {
+        res.send(error);
+      }
+    });
+    
 
 /* COMMUNAUTE */
 
@@ -166,12 +191,21 @@ userRouter.post('/account/update/:id', uploadAvatar.fields([{ name: 'avatar', ma
       update.cover = req.files['cover'][0].filename;
     }
 
+    if (req.body.username) {
+      update.username = req.body.username;
+    }
+
+    if (req.body.email) {
+      update.email = req.body.email;
+    }
+
     await userModel.updateOne({ _id: userId }, update);
     res.redirect('/account');
   } catch (error) {
     res.send(error);
   }
 });
+
 
 userRouter.get("/account/:id", async (req, res) => {
   try {
@@ -234,46 +268,78 @@ userRouter.get("/account/:id", async (req, res) => {
 
 /* FOLLOW */
 
-userRouter.get('/follow/:id', async (req, res) => { /* CONTROLLER */
-       let ids = await userModel.findOne({ _id: req.params.id }, req.body);
-        let userConnect = await userModel.findOne({ _id: req.session.user });
-        const userId = userConnect.id;
-        userModel.findById(userId, (err, user) => {
-            if (err) throw err;
-            user.following.push(req.params.id);
-            user.save();
-            userModel.findById(req.params.id, (err, followedUser) => {
-                if (err) throw err;
-                followedUser.followers.push(userId);
-                followedUser.save();
-                res.redirect('/account/' + ids);
-            });
-        });
+userRouter.get('/follow/:id', async (req, res) => {
+  let ids = await userModel.findOne({ _id: req.params.id }, req.body);
+  let userConnect = await userModel.findOne({ _id: req.session.user });
+  const userId = userConnect.id;
+
+  console.log('/account/' + ids.id);
+
+  userModel.findById(userId)
+  .exec()
+  .then((user) => {
+    if (!user) throw new Error('User not found');
+    user.following.push(req.params.id);
+    return user.save();
+  })
+  .then(() => {
+    return userModel.findById(req.params.id).exec();
+  })
+  .then((followedUser) => {
+    if (!followedUser) throw new Error('Followed user not found');
+    followedUser.followers.push(userId);
+    return followedUser.save();
+  })
+  .then(() => {
+    res.redirect('/account/' + ids.id);
+  })
+  .catch((err) => {
+    console.error(err);
+    res.status(500).send('An error occurred');
+  });
+
 });
 
-userRouter.get('/unfollow/:id', async (req, res) => { /* CONTROLLER */
-let ids = await userModel.findOne({ _id: req.params.id }, req.body);
-console.log(ids);
-let userConnect = await userModel.findOne({ _id: req.session.user });
-const userId = userConnect.id;
-userModel.findById(userId, (err, user) => {
-    if (err) throw err;
+userRouter.get('/unfollow/:id', async (req, res) => {
+  let ids = await userModel.findOne({ _id: req.params.id }, req.body);
+  let userConnect = await userModel.findOne({ _id: req.session.user });
+  const userId = userConnect.id;
+
+  console.log('/account/' + ids.id);
+
+  userModel.findById(userId)
+  .exec()
+  .then((user) => {
+    if (!user) throw new Error('User not found');
     const index = user.following.indexOf(req.params.id);
     if (index > -1) {
         user.following.splice(index, 1);
-        user.save();
+        return user.save();
     }
-    userModel.findById(req.params.id, (err, followedUser) => {
-        if (err) throw err;
-        const index = followedUser.followers.indexOf(userId);
-        if (index > -1) {
-            followedUser.followers.splice(index, 1);
-            followedUser.save();
-        }
-        res.redirect('/account/' + ids);
-    });
+    return Promise.resolve();
+  })
+  .then(() => {
+    return userModel.findById(req.params.id).exec();
+  })
+  .then((followedUser) => {
+    if (!followedUser) throw new Error('Followed user not found');
+    const index = followedUser.followers.indexOf(userId);
+    if (index > -1) {
+        followedUser.followers.splice(index, 1);
+        return followedUser.save();
+    }
+    return Promise.resolve();
+  })
+  .then(() => {
+    res.redirect('/account/' + ids.id);
+  })
+  .catch((err) => {
+    console.error(err);
+    res.status(500).send('An error occurred');
+  });
+
 });
-});
+
 
 
 export default userRouter;

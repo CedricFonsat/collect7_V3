@@ -1,13 +1,10 @@
 import mongoose from 'mongoose'
 
-const IMGAvatar = "/img/avatar.png";
-const IMGCover = "/img/background.png";
-
 const userSchema = new mongoose.Schema({
   username: {
     type: String,
     required: [true, "Pas de nom d'utilisateur"],
-    unique: true
+    unique: true,
   },
   email: {
     type: String,
@@ -15,7 +12,7 @@ const userSchema = new mongoose.Schema({
   },
   password: {
     type: String,
-    required: [true, "Pas de mot de passe"]
+    required: [true, "Pas de mot de passe"],
   },
   avatar: {
     type: String,

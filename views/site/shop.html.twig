@@ -14,9 +14,18 @@
                     </div>
                 </div>
             </div>
-
+       <form method="get" action="/home">
             <div class="default-exp-wrapper default-exp-expand">
                 <div class="inner">
+                    <div class="filter-select-option">
+                        <label class="filter-leble">DESC/ASC Price</label>
+                        <select name="price_max">
+                            <option data-display="Most liked">Price DESC/ASC</option>
+                            <option value="-1">price_max</option>
+                            <option value="1">price_min</option>
+                        </select>
+                    </div>
+
                     <div class="filter-select-option">
                         <label class="filter-leble">LIKES</label>
                         <select>
@@ -39,49 +48,41 @@
 
                     <div class="filter-select-option">
                         <label class="filter-leble">Collections</label>
-                        <select>
+                         <select name="collection" id="collection" value="">
                             <option data-display="Collections">Collections</option>
-                            <option value="1">BoredApeYachtClub</option>
-                            <option value="2">MutantApeYachtClub</option>
-                            <option value="4">Art Blocks Factory</option>
+                             {% for collection in collectionA %}
+                                <option value="{{collection.id}}">{{collection.name}}</option>
+                             {% endfor %}
                         </select>
                     </div>
 
-                    <div class="filter-select-option">
-                        <label class="filter-leble">Sale type</label>
-                        <select>
-                            <option data-display="Sale type">Sale type</option>
-                            <option value="1">Fixed price</option>
-                            <option value="2">Timed auction</option>
-                            <option value="4">Not for sale</option>
-                            <option value="4">Open for offers</option>
-                        </select>
-                    </div>
-
-                    <div class="filter-select-option">
+                    {# <div class="filter-select-option">
                         <label class="filter-leble">Price Range</label>
                         <div class="price_filter s-filter clear">
-                            <form action="#" method="GET">
                                 <div id="slider-range"></div>
                                 <div class="slider__range--output">
                                     <div class="price__output--wrap">
                                         <div class="price--output">
-                                            <span>Price :</span><input type="text" id="amount" readonly>
+                                            <span>Price :</span><input type="text" id="amount" name="price" readonly>
                                         </div>
                                         <div class="price--filter">
-                                            <a class="btn btn-primary btn-small" href="#">Filter</a>
+                                            <button type="submit"  class="btn btn-primary btn-small" href="#">Filter</button>
                                         </div>
                                     </div>
                                 </div>
-                            </form>
                         </div>
                     </div>
+                     #}
+                                            <button type="submit"  class="btn btn-primary btn-small" href="#">Filter</button>
+
+                    </form>
                 </div>
             </div>
 
             <div class="row g-5">
                {% for card in cards %}
-               {% if card.users is empty %}
+                  {% if card.ifAvalaible == 0 %}
+                    {% if card.users is empty %}
                                    <div class="col-5 col-lg-4 col-md-6 col-sm-6 col-12">
                         <div class="product-style-one no-overlay with-placeBid">
                             <div class="card-thumbnail">
@@ -116,6 +117,8 @@
                         </div>
                     </div>
                      {% endif %}
+                  {% endif %}
+                  
                {% endfor %}
             </div>
         </div>
@@ -167,4 +170,7 @@
             </div>
         </div>
     </div>
+
+
+
 {% endblock %}

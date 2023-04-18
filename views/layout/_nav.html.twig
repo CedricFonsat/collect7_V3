@@ -22,27 +22,14 @@
                                  <li><a href="/account">Compte</a></li>
                             </ul>
                             <!-- End Mainmanu Nav -->
-                        </nav>
-                    </div>
-                   {% else %}
-                    <div class="logo-thumbnail logo-custom-css">
-                        <a href="/login"><img src="/assets/images/logo/Collect7.png" alt="nft-logo"></a>
-                    </div>
-                    <div class="mainmenu-wrapper">
-                        <nav id="sideNav" class="mainmenu-nav d-none d-xl-block">
-                            <!-- Start Mainmanu Nav -->
-                            <ul class="mainmenu">
-                                <li>
-                                    <a href="/login">Accueil</a>
-                                </li>
-                                <li><a href="/login">Marché</a>
-                                </li>
-                                <li><a href="/login">Communauté</a></li>
-                                <li><a href="/login">Classement</a></li>
-                                 <li><a href="/login">Compte</a></li>
+                            <ul>
+                            <li>{{userConnect.wallet}} C7</li>
                             </ul>
-                            <!-- End Mainmanu Nav -->
                         </nav>
+                    </div>
+                    {% else %}
+                     <div class="logo-thumbnail logo-custom-css">
+                        <a class="my-20" href="/"><img src="/assets/images/logo/Collect7.png" alt="nft-logo"></a>
                     </div>
                    {% endif %}
                 </div>
@@ -87,13 +74,13 @@
                   {% if userConnect %}
 					    <div class="setting-option header-btn rbt-site-header" id="rbt-site-header">
                         <div class="icon-box">
-							<a href="/logout">Se déconnecter <i data-feather="log-out"></i></a>
+							<a href="/logout">Se déconnecter</a>
                         </div>
                     </div>
 				  {% else %}
 				    <div class="setting-option header-btn rbt-site-header" id="rbt-site-header">
                         <div class="icon-box">
-							<a href="/login">Se connecter <i data-feather="log-in"></i></a>
+							<a href="/login">Se connecter</a>
                         </div>
                     </div>
 				  {% endif %}

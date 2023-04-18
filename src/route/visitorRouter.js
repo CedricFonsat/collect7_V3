@@ -1,21 +1,25 @@
-import { Router } from "express";
 import 'dotenv/config'
 import userController from "../controller/userController.js";
 import collectionModel from "../model/collectionModel.js";
 import userModel from "../model/userModel.js";
 import cardModel from "../model/cardModel.js";
-import bodyParser from "body-parser";
-import { check, validationResult } from "express-validator";
-
-
-const visitorRouter = Router();
-const urlencodedParser = bodyParser.urlencoded({ extended: false });
-const ERROR_LOGIN = "There was an error, your identifiers not match";
-const ERROR_REGISTER_USERNAME = 'Username must be longer than 3 characters';
-const ERROR_REGISTER_EMAIL = 'Email is not valid';
+import { validationResult } from "express-validator";
+import { validatorRegister } from "../service/validator-security.js";
+import appController from "../controller/appController.js";
+import {login_error, visitorRouter, urlencodedParser} from '../service/constant.js'
 
 
 /* HOME */
+
+visitorRouter.post("/", async (req, res) => {
+  try{
+       //newsletter recup mail start
+       await appController.setNewsletter(req,res);
+       //newsletter recup mail end
+  } catch (error) {
+    res.send(error);
+  }
+})
 
 visitorRouter.get("/", async (req, res) => {
   try {
@@ -25,15 +29,22 @@ visitorRouter.get("/", async (req, res) => {
     let cardDiscovery = await cardModel.find(req.body).limit(5);
     let collections = await collectionModel.find(req.body).limit(4);
     let bestCard = await cardModel.find(req.body).limit(1); 
+    let usersCount = await userModel.find(req.body).count();
    // let cards = await cardModel.find({ users: { $in: users.map(user => user.id) } });
+
+   //Transaction calcule start
+   let cardsVisible = await cardModel.find({ifAvalaible: 1}).count();
+   //Transaction calcule end
 
     res.render("site/index.html.twig", {
       cardsCount: cardsCount,
+      usersCount: usersCount,
       collectionsCount: collectionsCount,
       bestUser: bestUser,
       cardDiscovery: cardDiscovery,
       collections: collections,
-      bestCard: bestCard
+      bestCard: bestCard,
+      cardsVisible: cardsVisible
     });
   } catch (error) {
     res.send(error);
@@ -52,31 +63,18 @@ visitorRouter.get("/register", async (req, res) => {
 });
 
 
-visitorRouter.post("/register", urlencodedParser, [
-  check('username', ERROR_REGISTER_USERNAME)
-      .exists()
-      .isLength({ min: 3 }),
-  check('email', ERROR_REGISTER_EMAIL)
-      .isEmail()
-      .normalizeEmail()
-], async (req, res) => {
-  try {
-    const errors = validationResult(req)
-    if(!errors.isEmpty()) {
-        const alert = errors.array()
-        res.render('auth/register.html.twig', {
-            alert
-        })
-    } else {
-        await userController.setRegistration(req, res);
-        res.redirect("/");
-    }
-  } catch (error) {
-    res.send(error);
+visitorRouter.post("/register", urlencodedParser,validatorRegister, async (req, res) => {
+  
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    res.render('auth/register.html.twig', { errors: errors.array() });
+  } else {
+    // le formulaire est valide, on peut enregistrer l'utilisateur
+    await userController.setRegistration(req, res);
+    res.redirect('/login');
   }
 });
-
-
 
 /* CONNEXION */
 
@@ -96,9 +94,8 @@ visitorRouter.post("/login", async (req, res) => {
       req.session.user = user._id
       res.redirect("/home");
     } else {
-      const alert = ERROR_LOGIN;
       res.render("auth/login.html.twig",{
-        alert
+        login_error
       });
     }
   }

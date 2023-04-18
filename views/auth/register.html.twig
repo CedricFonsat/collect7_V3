@@ -5,7 +5,6 @@
 {% endblock %}
 
 {% block body %}
-
 	<!-- login form -->
 	<div class="login-area rn-section-gapTop">
 		<div class="container">
@@ -13,38 +12,37 @@
 				<div class="col-lg-4 col-md-6 ml_md--0 ml_sm--0 col-sm-12">
 					<div class="form-wrapper-one registration-area">
 						<h4>Sign up</h4>
-						{% if alert is defined %}
-							{% for error in alert %}
+						{% if errors  %}
+							{% for error in errors %}
 								<div class="alert alert-warning alert-dismissible fade show" role="alert">
 									{{ error.msg }}
 								</div>
 							{% endfor %}
 						{% endif %}
-
-
+						
 						<form action="/register" method="post">
 							<div class="mb-5">
 								<label for="username" class="form-label">Username</label>
-								<input type="text" id="username" name="username">
+								<input type="text" id="username" name="username" pattern="[a-z0-9.-_]{4,20}" required>
 							</div>
 							<div class="mb-5">
 								<label for="email" class="form-label">Email address</label>
-								<input type="email" id="email" name="email">
+								<input type="email" id="email" name="email" required>
 							</div>
 							<div class="mb-5">
 								<label for="password" class="form-label">Create Password</label>
-								<input type="password" id="password" name="password">
+								<input type="password" id="password" name="password" required>
+								<button type="button" id="showPasswordButton">Afficher le mot de passe</button>
 							</div>
 							<div class="mb-5">
-								<label for="exampleInputPassword1" class="form-label">Re Password</label>
-								<input type="password" id="exampleInputPassword1">
+								<label for="passwordRepeat" class="form-label">Re Password</label>
+								<input type="password" id="passwordRepeat" name="confirmPassword" required>
+								<button type="button" id="showPasswordButtonRepeat">Afficher le mot de passe</button>
 							</div>
 							<div class="mb-5 rn-check-box">
-								<input type="checkbox" class="rn-check-box-input" id="exampleCheck1">
-								<label class="rn-check-box-label" for="exampleCheck1">Allow to all tearms &
-																		                                    condition</label>
+								<label class="rn-check-box-label" for="exampleCheck1">En vous inscrivant, vous acceptez les termes et conditions</label>
 							</div>
-							<button type="submit" class="btn btn-primary mr--15">Sign Up</button>
+							<button type="submit" class="btn btn-primary mr--15" id="buttonSignUp">Sign Up</button>
 							<a href="/login" class="btn">Log In</a>
 						</form>
 					</div>
@@ -53,212 +51,41 @@
 		</div>
 	</div>
 	<!-- login form end -->
+	  <script>
+    const showPasswordButton = document.getElementById('showPasswordButton');
+    const passwordInput = document.getElementById('password');
+    showPasswordButton.addEventListener('click', () => {
+      if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        showPasswordButton.textContent = 'Cacher le mot de passe';
+      } else {
+        passwordInput.type = 'password';
+        showPasswordButton.textContent = 'Afficher le mot de passe';
+      }
+    });
 
+	const showPasswordButtonRepeat = document.getElementById('showPasswordButtonRepeat');
+    const passwordInputRepeat = document.getElementById('passwordRepeat');
+    showPasswordButtonRepeat.addEventListener('click', () => {
+      if (passwordInputRepeat.type === 'password') {
+        passwordInputRepeat.type = 'text';
+        showPasswordButtonRepeat.textContent = 'Cacher le mot de passe';
+      } else {
+        passwordInputRepeat.type = 'password';
+        showPasswordButtonRepeat.textContent = 'Afficher le mot de passe';
+      }
+    });
 
-	<!-- Start Footer Area -->
-	<div class="rn-footer-one rn-section-gap bg-color--1 mt--100 mt_md--80 mt_sm--80">
-		<div class="container">
-			<div class="row gx-5">
-				<div class="col-lg-3 col-md-6 col-sm-6 col-12">
-					<div class="widget-content-wrapper">
-						<div class="footer-left">
-							<div class="logo-thumbnail logo-custom-css">
-								<a class="logo-light" href="index.html"><img src="assets/images/logo/logo-white.png" alt="nft-logo"></a>
-								<a class="logo-dark" href="index.html"><img src="assets/images/logo/logo-dark.png" alt="nft-logo"></a>
-							</div>
-							<p class="rn-footer-describe">
-								Created with the collaboration of over 60 of the world's best Nuron Artists.
-							</p>
-						</div>
-						<div class="widget-bottom mt--40 pt--40">
-							<h6 class="title">Get The Latest Nuron Updates
-							</h6>
-							<div class="input-group">
-								<input type="text" class="form-control bg-color--2" placeholder="Your username" aria-label="Recipient's username">
-								<div class="input-group-append">
-									<button class="btn btn-primary-alta btn-outline-secondary" type="button">Subscribe</button>
-								</div>
-							</div>
-							<div class="newsletter-dsc">
-								<p>Email is safe. We don't spam.</p>
-							</div>
-						</div>
-					</div>
-				</div>
-
-				<div class="col-lg-3 col-md-6 col-sm-6 col-12 mt_mobile--40">
-					<div class="footer-widget widget-quicklink">
-						<h6 class="widget-title">Nuron</h6>
-						<ul class="footer-list-one">
-							<li class="single-list">
-								<a href="#">Protocol Explore</a>
-							</li>
-							<li class="single-list">
-								<a href="#">System Token</a>
-							</li>
-							<li class="single-list">
-								<a href="#">Otimize Time</a>
-							</li>
-							<li class="single-list">
-								<a href="#">Visual Checking</a>
-							</li>
-							<li class="single-list">
-								<a href="#">Fadeup System</a>
-							</li>
-							<li class="single-list">
-								<a href="#">Activity Log</a>
-							</li>
-							<li class="single-list">
-								<a href="#">System Auto Since</a>
-							</li>
-						</ul>
-					</div>
-				</div>
-
-				<div class="col-lg-3 col-md-6 col-sm-6 col-12 mt_md--40 mt_sm--40">
-					<div class="footer-widget widget-information">
-						<h6 class="widget-title">Information</h6>
-						<ul class="footer-list-one">
-							<li class="single-list">
-								<a href="#">Market Explore</a>
-							</li>
-							<li class="single-list">
-								<a href="#">Ready Token</a>
-							</li>
-							<li class="single-list">
-								<a href="#">Main Option</a>
-							</li>
-							<li class="single-list">
-								<a href="#">Product Checking</a>
-							</li>
-							<li class="single-list">
-								<a href="blog.html">Blog Grid</a>
-							</li>
-							<li class="single-list">
-								<a href="about.html">About Us</a>
-							</li>
-							<li class="single-list">
-								<a href="#">Fix Bug
-								</a>
-							</li>
-						</ul>
-					</div>
-				</div>
-
-				<div class="col-lg-3 col-md-6 col-sm-6 col-12 mt_md--40 mt_sm--40">
-					<div class="footer-widget">
-						<h6 class="widget-title">Recent Sold Out</h6>
-						<ul class="footer-recent-post">
-							<li class="recent-post">
-								<div class="thumbnail">
-									<a href="product-details.html">
-										<img src="assets/images/portfolio/portfolio-01.jpg" alt="Product Images">
-									</a>
-								</div>
-								<div class="content">
-									<h6 class="title">
-										<a href="product-details.html">#21 The Wonder</a>
-									</h6>
-									<p>Highest bid 1/20</p>
-									<span class="price">0.244wETH</span>
-								</div>
-							</li>
-							<li class="recent-post">
-								<div class="thumbnail">
-									<a href="product-details.html">
-										<img src="assets/images/portfolio/portfolio-02.jpg" alt="Product Images">
-									</a>
-								</div>
-								<div class="content">
-									<h6 class="title">
-										<a href="product-details.html">Diamond Dog</a>
-									</h6>
-									<p>Highest bid 1/20</p>
-									<span class="price">0.022wETH</span>
-								</div>
-							</li>
-							<li class="recent-post">
-								<div class="thumbnail">
-									<a href="product-details.html">
-										<img src="assets/images/portfolio/portfolio-03.jpg" alt="Product Images">
-									</a>
-								</div>
-								<div class="content">
-									<h6 class="title">
-										<a href="product-details.html">Morgan11</a>
-									</h6>
-									<p>Highest bid 1/20</p>
-									<span class="price">0.892wETH</span>
-								</div>
-							</li>
-						</ul>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-	<!-- End Footer Area -->
-	<!-- Start Footer Area -->
-	<div class="copy-right-one ptb--20 bg-color--1">
-		<div class="container">
-			<div class="row align-items-center">
-				<div class="col-lg-6 col-md-12 col-sm-12">
-					<div class="copyright-left">
-						<span>©2022 Nuron, Inc. All rights reserved.</span>
-						<ul class="privacy">
-							<li>
-								<a href="terms-condition.html">Terms</a>
-							</li>
-							<li>
-								<a href="privacy-policy.html">Privacy Policy</a>
-							</li>
-						</ul>
-					</div>
-				</div>
-				<div class="col-lg-6 col-md-12 col-sm-12">
-					<div class="copyright-right">
-						<ul class="social-copyright">
-							<li>
-								<a href="#">
-									<i data-feather="facebook"></i>
-								</a>
-							</li>
-							<li>
-								<a href="#">
-									<i data-feather="twitter"></i>
-								</a>
-							</li>
-							<li>
-								<a href="#">
-									<i data-feather="instagram"></i>
-								</a>
-							</li>
-							<li>
-								<a href="#">
-									<i data-feather="linkedin"></i>
-								</a>
-							</li>
-							<li>
-								<a href="#">
-									<i data-feather="mail"></i>
-								</a>
-							</li>
-						</ul>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-	<!-- End Footer Area -->
-	<div class="mouse-cursor cursor-outer"></div>
-	<div class="mouse-cursor cursor-inner"></div>
-	<!-- Start Top To Bottom Area  -->
-	<div class="rn-progress-parent">
-		<svg class="rn-back-circle svg-inner" width="100%" height="100%" viewbox="-1 -1 102 102">
-			<path d="M50,1 a49,49 0 0,1 0,98 a49,49 0 0,1 0,-98"/>
-		</svg>
-	</div>
+      {# const buttonSignUp = document.getElementById('buttonSignUp');
+	  buttonSignUp.addEventListener('click', () => {
+      const password = document.getElementById('password').value;
+      const confirmPassword = document.getElementById('passwordRepeat').value;
+      if (password === confirmPassword) {
+        document.getElementById('result').textContent = "Inscription réussie pour l'utilisateur " + username + ".";
+        // Code pour envoyer le formulaire au serveur ici
+      } else {
+        document.getElementById('result').textContent = "Les mots de passe ne correspondent pas.";
+      }
+    }) #}
+  </script>
 {% endblock %}
-
-
-{% block footer %}{% endblock %}

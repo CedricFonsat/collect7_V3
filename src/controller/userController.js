@@ -1,10 +1,12 @@
 import userModel from "../model/userModel.js";
 import { cryptPassword, comparePassword } from "../service/bcrypt.js";
 import "dotenv/config";
+import cookieParser from "cookie-parser";
 
 export class userController {
 
     static async setRegistration(req) {
+
         let userPseudo= await userModel.findOne({username: req.body.username})
         if (userPseudo) {
             console.log(userPseudo);
@@ -20,37 +22,39 @@ export class userController {
         req.session.user = user._id
     }
 
-    static async setLogin(req) {
+    static async setLogin(req,res) {
+
         let userPseudo= await userModel.findOne({username: req.body.email})
         if (userPseudo) {
-            if ( comparePassword(req.body.password,userPseudo.password)) {
+            const authUsername = await comparePassword(req.body.password,userPseudo.password)
+            if (authUsername) {
+                if (req.query.rememberMe) {
+                    // Set cookie if "remember me" checkbox is checked
+                    res.cookie('rememberMe', '1', { maxAge: 900000, httpOnly: true });
+                    return userPseudo
+                  } else {
+                    // Delete cookie if "remember me" checkbox is unchecked
+                    res.clearCookie('rememberMe');
+                  }
                 return userPseudo
-            } 
+            } else console.log('error de login');
         }
         let userMail= await userModel.findOne({email: req.body.email})
-        if (userMail) {
-            if (comparePassword(req.body.password,userMail.password)) {
+       
+        if (userMail){
+            const authEmail = await comparePassword(req.body.password,userMail.password)
+            if (authEmail) {
+                if (req.query.rememberMe) {
+                    // Set cookie if "remember me" checkbox is checked
+                    res.cookie('rememberMe', '1', { maxAge: 900000, httpOnly: true });
+                    return userMail
+                  } else {
+                    // Delete cookie if "remember me" checkbox is unchecked
+                    res.clearCookie('rememberMe');
+                  }
                 return userMail
-            }
-
+            } else console.log('error de login');
         }
-      return null
-    }
-
-
-
-    static async buyCard(req, res) {
-      
-    }
-
-    static async getHome(req, res) {
-       // let cards = await cardModel.find();
-       // let userConnect = await userModel.findOne({ _id: req.session.user });
-        // let countCards = 0;
-        // for (let i = 0; i < cards.length; i++) {
-        //     cards[i].user == '' ? countCards += 1 : countCards += 0;
-        // }
-        res.render("site/shop.html.twig");
     }
 
     static async buy(req, res) {
@@ -78,13 +82,8 @@ export class userController {
         }
     }
 
-    static async follow(req, res) {
-   
-    }
 
-    static async unfollow(req, res) {
-     
-    }
+
 
 }
 

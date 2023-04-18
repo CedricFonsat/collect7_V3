@@ -7,7 +7,6 @@ import visitorRouter from "./src/route/visitorRouter.js";
 import userRouter from "./src/route/userRouter.js";
 import adminRouter from "./src/route/adminRouter.js";
 
-
 const db = process.env.BDD_URL;
 const app = express();
 const router = express.Router();
@@ -28,13 +27,11 @@ router.use(visitorRouter);
 router.use(userRouter);
 router.use(adminRouter);
 
-
-
-
 //global route
 router.get("/*", function (req, res) {
   res.redirect("/");
 });
+
 
 
 app.listen(process.env.PORT, function (err) {
@@ -48,13 +45,5 @@ app.listen(process.env.PORT, function (err) {
 mongoose.connect(db)
   .then(() => console.log('Connexion réussie à la base de données'))
   .catch((err) => console.error('Erreur de connexion à la base de données', err));
-
-// mongoose.connect(db, (err) => {
-//   if (err) {
-//     console.log(err);
-//   } else {
-//     console.log("connected to database mongodb (c'est dur....)");
-//   }
-// });
 
 export default router;

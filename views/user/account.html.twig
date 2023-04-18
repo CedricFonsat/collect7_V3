@@ -30,7 +30,6 @@
                                     </div>
                                 </div>
                                 <div class="author-button-area">
-                                    <span class="btn at-follw follow-button"><i data-feather="user-plus"></i> Follow</span>
                                     <span class="btn at-follw share-button" data-bs-toggle="modal" data-bs-target="#shareModal"><i data-feather="share-2"></i></span>
                                     <div class="count at-follw">
                                         <div class="share-btn share-btn-activation dropdown">
@@ -79,8 +78,14 @@
                 <div class="tab-pane row g-5 d-flex fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
                     {% if userConnect.cards %}
                     {% for card in cards %}
-                    {% if card.ifAvalaible == 0 %}
-                      <!-- start single product -->
+                    {% if cards.length == 0 %}
+                       <div class="col-5 col-lg-4 col-md-6 col-sm-6 col-12">
+                         <div class="product-style-one no-overlay with-placeBid d-flex aligns-items-center justify-content-center">
+                           <a href="#"><span class="product-name">Vous n'avez pas encore de carte</span></a>
+                          </div>
+                        </div>
+                    {% else %}
+                     <!-- start single product -->
                     <div class="col-5 col-lg-4 col-md-6 col-sm-6 col-12">
                         <div class="product-style-one no-overlay with-placeBid">
                             <div class="card-thumbnail">
@@ -115,12 +120,6 @@
                         </div>
                     </div>
                     <!-- end single product -->
-                     {% else %}
-                                         <div class="col-5 col-lg-4 col-md-6 col-sm-6 col-12">
-                     <div class="product-style-one no-overlay with-placeBid d-flex aligns-items-center justify-content-center">
-                     <a href="#"><span class="product-name">Vous n'avez pas encore de carte</span></a>
-                        </div>
-                    </div>
                      {% endif %}
 					{% endfor %}
                     {% else %}
