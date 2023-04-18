@@ -12,14 +12,14 @@
 				<div class="col-lg-4 col-md-6 ml_md--0 ml_sm--0 col-sm-12">
 					<div class="form-wrapper-one registration-area">
 						<h4>Sign up</h4>
-						{% if alert is defined %}
-							{% for error in alert %}
+						{% if errors  %}
+							{% for error in errors %}
 								<div class="alert alert-warning alert-dismissible fade show" role="alert">
 									{{ error.msg }}
 								</div>
 							{% endfor %}
 						{% endif %}
-						<p id="result"></p>
+						
 						<form action="/register" method="post">
 							<div class="mb-5">
 								<label for="username" class="form-label">Username</label>
@@ -31,21 +31,16 @@
 							</div>
 							<div class="mb-5">
 								<label for="password" class="form-label">Create Password</label>
-								<input type="password" id="password" name="password"
-								pattern="(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}"
-								 required>
+								<input type="password" id="password" name="password" required>
 								<button type="button" id="showPasswordButton">Afficher le mot de passe</button>
 							</div>
 							<div class="mb-5">
 								<label for="passwordRepeat" class="form-label">Re Password</label>
-								<input type="password" id="passwordRepeat"
-								pattern="(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}"
-								 required>
+								<input type="password" id="passwordRepeat" name="confirmPassword" required>
 								<button type="button" id="showPasswordButtonRepeat">Afficher le mot de passe</button>
 							</div>
 							<div class="mb-5 rn-check-box">
-								<input type="checkbox" class="rn-check-box-input" id="exampleCheck1" required>
-								<label class="rn-check-box-label" for="exampleCheck1">Allow to all tearms & condition</label>
+								<label class="rn-check-box-label" for="exampleCheck1">En vous inscrivant, vous acceptez les termes et conditions</label>
 							</div>
 							<button type="submit" class="btn btn-primary mr--15" id="buttonSignUp">Sign Up</button>
 							<a href="/login" class="btn">Log In</a>
@@ -81,7 +76,7 @@
       }
     });
 
-      const buttonSignUp = document.getElementById('buttonSignUp');
+      {# const buttonSignUp = document.getElementById('buttonSignUp');
 	  buttonSignUp.addEventListener('click', () => {
       const password = document.getElementById('password').value;
       const confirmPassword = document.getElementById('passwordRepeat').value;
@@ -91,6 +86,6 @@
       } else {
         document.getElementById('result').textContent = "Les mots de passe ne correspondent pas.";
       }
-    })
+    }) #}
   </script>
 {% endblock %}

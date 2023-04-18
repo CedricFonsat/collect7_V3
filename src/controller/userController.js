@@ -1,15 +1,11 @@
 import userModel from "../model/userModel.js";
 import { cryptPassword, comparePassword } from "../service/bcrypt.js";
 import "dotenv/config";
+import cookieParser from "cookie-parser";
 
 export class userController {
 
     static async setRegistration(req) {
-
-        // function validateMDP(mdp){
-        //     var Reg = new RegExp(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/);
-        //     return Reg.test(mdp);
-        // }
 
         let userPseudo= await userModel.findOne({username: req.body.username})
         if (userPseudo) {
@@ -26,11 +22,20 @@ export class userController {
         req.session.user = user._id
     }
 
-    static async setLogin(req) {
+    static async setLogin(req,res) {
+
         let userPseudo= await userModel.findOne({username: req.body.email})
         if (userPseudo) {
             const authUsername = await comparePassword(req.body.password,userPseudo.password)
             if (authUsername) {
+                if (req.query.rememberMe) {
+                    // Set cookie if "remember me" checkbox is checked
+                    res.cookie('rememberMe', '1', { maxAge: 900000, httpOnly: true });
+                    return userPseudo
+                  } else {
+                    // Delete cookie if "remember me" checkbox is unchecked
+                    res.clearCookie('rememberMe');
+                  }
                 return userPseudo
             } else console.log('error de login');
         }
@@ -39,6 +44,14 @@ export class userController {
         if (userMail){
             const authEmail = await comparePassword(req.body.password,userMail.password)
             if (authEmail) {
+                if (req.query.rememberMe) {
+                    // Set cookie if "remember me" checkbox is checked
+                    res.cookie('rememberMe', '1', { maxAge: 900000, httpOnly: true });
+                    return userMail
+                  } else {
+                    // Delete cookie if "remember me" checkbox is unchecked
+                    res.clearCookie('rememberMe');
+                  }
                 return userMail
             } else console.log('error de login');
         }
@@ -68,6 +81,8 @@ export class userController {
             res.redirect('/account');
         }
     }
+
+
 
 
 }

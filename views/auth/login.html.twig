@@ -12,9 +12,9 @@
 				<div class="col-lg-4 col-md-6 ml_md--0 ml_sm--0 col-sm-12">
 					<div class="form-wrapper-one">
 						<h4>Login</h4>
-						{% if alert is defined %}
+						{% if login_error is defined %}
 							<div class="alert alert-warning alert-dismissible fade show" role="alert">
-								{{ alert }}
+								{{ login_error }}
 							</div>
 						{% endif %}
 						<form action="/login" method="post">
@@ -27,6 +27,12 @@
 								<input type="password" id="password" name="password">
 								<button type="button" id="showPasswordButton">Afficher le mot de passe</button>
 							</div>
+							<div class="form-check mb-5">
+								<input class="form-check-input" type="checkbox" value="" name="rememberMe" id="rememberMe">
+								<label class="form-check-label" for="rememberMe">
+									Se souvenir de moi
+								</label>
+							</div>
 							<button type="submit" class="btn btn-primary mr--15">Log In</button>
 							<a href="/register" class="btn">Sign Up</a>
 						</form>
@@ -38,16 +44,16 @@
 	<!-- login form end -->
 
 	<script>
-	   const showPasswordButton = document.getElementById('showPasswordButton');
-    const passwordInput = document.getElementById('password');
-    showPasswordButton.addEventListener('click', () => {
-      if (passwordInput.type === 'password') {
-        passwordInput.type = 'text';
-        showPasswordButton.textContent = 'Cacher le mot de passe';
-      } else {
-        passwordInput.type = 'password';
-        showPasswordButton.textContent = 'Afficher le mot de passe';
-      }
-    });
+		const showPasswordButton = document.getElementById('showPasswordButton');
+const passwordInput = document.getElementById('password');
+showPasswordButton.addEventListener('click', () => {
+if (passwordInput.type === 'password') {
+passwordInput.type = 'text';
+showPasswordButton.textContent = 'Cacher le mot de passe';
+} else {
+passwordInput.type = 'password';
+showPasswordButton.textContent = 'Afficher le mot de passe';
+}
+});
 	</script>
 {% endblock %}

@@ -1,53 +1,21 @@
-import { Router } from "express";
 import 'dotenv/config'
 import userController from "../controller/userController.js";
 import collectionModel from "../model/collectionModel.js";
 import userModel from "../model/userModel.js";
 import cardModel from "../model/cardModel.js";
-import bodyParser from "body-parser";
-import { check, validationResult } from "express-validator";
-import { createTestAccount, createTransport, getTestMessageUrl } from "nodemailer";
-import newsletter from "../service/newsletter.js";
-
-
-const visitorRouter = Router();
-const urlencodedParser = bodyParser.urlencoded({ extended: false });
-const ERROR_LOGIN = "There was an error, your identifiers not match";
-const ERROR_REGISTER_USERNAME = 'Username must be longer than 3 characters';
-const ERROR_REGISTER_EMAIL = 'Email is not valid';
+import { validationResult } from "express-validator";
+import { validatorRegister } from "../service/validator-security.js";
+import appController from "../controller/appController.js";
+import {login_error, visitorRouter, urlencodedParser} from '../service/constant.js'
 
 
 /* HOME */
 
 visitorRouter.post("/", async (req, res) => {
   try{
-       //newsletter recup mail
-   const transporter = createTransport({
-    service: 'gmail',
-    auth: {
-        user: 'fonsat.nodemailer@gmail.com',
-        pass: 'dlclhbrybfcawlgi'
-    }
-})
-
-const mailOptions = {
-    from: 'fonsat.nodemailer@gmail.com',
-    to: req.body.email,
-    subject: 'Newsletter - Collect7',
-    html: newsletter
-}
-
-transporter.sendMail(mailOptions, (error, info)=>{
-    if (error) {
-        console.log(error);
-        res.send('error')
-    }else{
-        console.log('Email sent: '+info.res);
-        res.redirect('/#newsletter')
-    }
-})
-
-//end
+       //newsletter recup mail start
+       await appController.setNewsletter(req,res);
+       //newsletter recup mail end
   } catch (error) {
     res.send(error);
   }
@@ -66,8 +34,6 @@ visitorRouter.get("/", async (req, res) => {
 
    //Transaction calcule start
    let cardsVisible = await cardModel.find({ifAvalaible: 1}).count();
-
-   console.log(cardsVisible);
    //Transaction calcule end
 
     res.render("site/index.html.twig", {
@@ -97,31 +63,18 @@ visitorRouter.get("/register", async (req, res) => {
 });
 
 
-visitorRouter.post("/register", urlencodedParser, [
-  check('username', ERROR_REGISTER_USERNAME)
-      .exists()
-      .isLength({ min: 3 }),
-  check('email', ERROR_REGISTER_EMAIL)
-      .isEmail()
-      .normalizeEmail()
-], async (req, res) => {
-  try {
-    const errors = validationResult(req)
-    if(!errors.isEmpty()) {
-        const alert = errors.array()
-        res.render('auth/register.html.twig', {
-            alert
-        })
-    } else {
-        await userController.setRegistration(req, res);
-        res.redirect("/");
-    }
-  } catch (error) {
-    res.send(error);
+visitorRouter.post("/register", urlencodedParser,validatorRegister, async (req, res) => {
+  
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    res.render('auth/register.html.twig', { errors: errors.array() });
+  } else {
+    // le formulaire est valide, on peut enregistrer l'utilisateur
+    await userController.setRegistration(req, res);
+    res.redirect('/login');
   }
 });
-
-
 
 /* CONNEXION */
 
@@ -141,9 +94,8 @@ visitorRouter.post("/login", async (req, res) => {
       req.session.user = user._id
       res.redirect("/home");
     } else {
-      const alert = ERROR_LOGIN;
       res.render("auth/login.html.twig",{
-        alert
+        login_error
       });
     }
   }
