@@ -6,16 +6,16 @@ import cardModel from "../model/cardModel.js";
 import { validationResult } from "express-validator";
 import { validatorRegister } from "../service/validator-security.js";
 import appController from "../controller/appController.js";
-import {login_error, visitorRouter, urlencodedParser} from '../service/constant.js'
+import { login_error, visitorRouter, urlencodedParser } from '../service/constant.js'
 
 
 /* HOME */
 
 visitorRouter.post("/", async (req, res) => {
-  try{
-       //newsletter recup mail start
-       await appController.setNewsletter(req,res);
-       //newsletter recup mail end
+  try {
+    //newsletter recup mail start
+    await appController.setNewsletter(req, res);
+    //newsletter recup mail end
   } catch (error) {
     res.send(error);
   }
@@ -28,13 +28,13 @@ visitorRouter.get("/", async (req, res) => {
     let bestUser = await userModel.find(req.body).limit(10);
     let cardDiscovery = await cardModel.find(req.body).limit(5);
     let collections = await collectionModel.find(req.body).limit(4);
-    let bestCard = await cardModel.find(req.body).limit(1); 
+    let bestCard = await cardModel.find(req.body).limit(1);
     let usersCount = await userModel.find(req.body).count();
-   // let cards = await cardModel.find({ users: { $in: users.map(user => user.id) } });
+    // let cards = await cardModel.find({ users: { $in: users.map(user => user.id) } });
 
-   //Transaction calcule start
-   let cardsVisible = await cardModel.find({ifAvalaible: 1}).count();
-   //Transaction calcule end
+    //Transaction calcule start
+    let cardsVisible = await cardModel.find({ ifAvalaible: 1 }).count();
+    //Transaction calcule end
 
     res.render("site/index.html.twig", {
       cardsCount: cardsCount,
@@ -63,8 +63,8 @@ visitorRouter.get("/register", async (req, res) => {
 });
 
 
-visitorRouter.post("/register", urlencodedParser,validatorRegister, async (req, res) => {
-  
+visitorRouter.post("/register", urlencodedParser, validatorRegister, async (req, res) => {
+
   const errors = validationResult(req);
 
   if (!errors.isEmpty()) {
@@ -94,7 +94,7 @@ visitorRouter.post("/login", async (req, res) => {
       req.session.user = user._id
       res.redirect("/home");
     } else {
-      res.render("auth/login.html.twig",{
+      res.render("auth/login.html.twig", {
         login_error
       });
     }
@@ -131,7 +131,7 @@ visitorRouter.get("/faq", async (req, res) => {
   } catch (error) {
     res.send(error);
   }
-}); 
+});
 
 
 
@@ -141,6 +141,13 @@ visitorRouter.get("/faq", async (req, res) => {
 
 
 
+visitorRouter.get("/contact", async (req, res) => {
+  try {
+    res.render("site/contact.html.twig");
+  } catch (error) {
+    res.send(error);
+  }
+});
 
 
 export default visitorRouter;
