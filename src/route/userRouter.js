@@ -5,9 +5,125 @@ import cardModel from "../model/cardModel.js";
 import { uploadAvatarCover } from "../service/multer.js";
 import userController from "../controller/userController.js";
 import uploadAvatar from "../service/avatar.js";
+import nodemailer from "nodemailer";
+
+
+import crypto from 'crypto';
+import appController from "../controller/appController.js";
+
+
 
 const userRouter = Router();
 
+//___________________________________________________________________________________________
+//___________________________________________________________________________________________
+//___________________________________________________________________________________________
+//___________________________________________________________________________________________
+userRouter.get('/forgot', function(req, res) {
+  res.render('auth/reset-password/forgot.html.twig');
+});
+
+userRouter.post("/forgot", async (req, res) => {
+
+  const user = userModel.findOne({ email: req.body.email })
+  if (!user) {
+    return res.redirect('/forgot');
+ }else{
+  crypto.randomBytes(20, function(err, buf) {
+    if (err) throw err;
+    const token = buf.toString('hex')
+    userModel.resetToken = token;
+    userModel.resetTokenExpiration = Date.now() + 3600000; // 1 hour
+    userModel.upd();
+ 
+
+  const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: 'fonsat.nodemailer@gmail.com',
+        pass: 'dlclhbrybfcawlgi'
+    }
+  });
+
+  const mailOptions = {
+    to: 'fonsat.nodemailer@gmail.com',
+    from: req.body.email,
+    subject: 'Reset your password',
+    text: `You are receiving this email because you (or someone else) have requested the reset of the password for your account.\n\n
+      Please click on the following link, or paste this into your browser to complete the process:\n\n
+      http://${req.headers.host}/reset/${token}\n\n
+      If you did not request this, please ignore this email and your password will remain unchanged.\n`,
+  };
+
+ 
+  res.redirect('/forgot')
+  console.log('yes,yes,yes')
+  return transporter.sendMail(mailOptions);
+})
+
+ }
+    
+ 
+  res.redirect("/account");
+})
+
+userRouter.get('/reset/:token', function(req, res) {
+  userModel.findOne({ resetToken: req.params.token, resetTokenExpiration: { $gt: Date.now() } }, function(err, user) {
+    if (err) throw err;
+
+    if (!user) {
+      return res.redirect('/forgot');
+    }
+
+    res.render('auth/reset-password/reset.html.twig', { token: req.params.token });
+  });
+});
+
+
+userRouter.post('/reset/:token', function(req, res) {
+  userModel.findOne({ resetToken: req.params.token, resetTokenExpiration: { $gt: Date.now() } }, function(err, userModel) {
+    if (err) throw err;
+
+    if (!userModel) {
+      return res.redirect('/forgot');
+    }
+
+    userModel.password = req.body.password;
+    userModel.resetToken = undefined;
+    userModel.resetTokenExpiration = undefined;
+
+    userModel.save(function(err) {
+      if (err) throw err;
+
+      const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+            user: 'fonsat.nodemailer@gmail.com',
+            pass: 'dlclhbrybfcawlgi'
+        }
+      });
+
+      const mailOptions = {
+        to: 'fonsat.nodemailer@gmail.com',
+        from: req.body.email,
+        subject: 'Your password has been changed',
+        text: 'Hello,\n\n' +
+          'This is a confirmation that the password for your account ' + user.email + ' has just been changed.\n',
+      };
+
+      transporter.sendMail(mailOptions, function(err) {
+        if (err) throw err;
+
+         res.redirect('/');
+      });
+    });
+  });
+});
+
+//___________________________________________________________________________________________
+//___________________________________________________________________________________________
+//___________________________________________________________________________________________
+//___________________________________________________________________________________________
 
 
 /* EN VENTE */
@@ -57,6 +173,12 @@ userRouter.get("/buyCard/:cardId", async (req,res) => {
             { $push: { user: userOnline.id } }
         );
         res.redirect("/home");
+
+// Create an instance of Notyf
+const notyf = new Notyf();
+
+// Display an error notification 
+notyf.error('Please fill out the form');
         console.log('buy card');
     } else if (userOnline.wallet < cardSell.price) {
         res.redirect("/home");
