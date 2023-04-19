@@ -1,4 +1,4 @@
-import { createTransport } from "nodemailer";
+import nodemailer,{ createTransport } from "nodemailer";
 import newsletter from "../service/newsletter.js";
 
 export class appController {
@@ -27,6 +27,10 @@ export class appController {
                 console.log('Email sent: '+info.res);
                 res.redirect('/#newsletter')
             } })
+    }
+
+    static async setTeste(req, res){
+       
     }
 }
 

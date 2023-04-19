@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Forgot Password</title>
+</head>
+<body>
+  {% if message %}
+    <div>{{ message }}</div>
+  {% endif %}
+  <form action="/forgot" method="POST">
+    <div>
+      <label>Email:</label>
+      <input type="email" name="email">
+    </div>
+    <div>
+      <button type="submit">Reset Password</button>
+    </div>
+  </form>
+</body>
+</html>

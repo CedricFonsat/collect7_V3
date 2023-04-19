@@ -34,6 +34,8 @@ const userSchema = new mongoose.Schema({
     required: [true, "Vous n'avez pas assez de 7coins"],
     default: 300
   },
+  resetToken: String,
+  resetTokenExpiration: Date,
 })
 
 userSchema.methods.getFollowers = function (callback) {

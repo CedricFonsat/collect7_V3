@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Reset Password</title>
+</head>
+<body>
+  {% if message %}
+    <div>{{ message }}</div>
+  {% endif %}
+  <form action="/reset/{{ token }}" method="POST">
+    <div>
+      <label>New Password:</label>
+      <input type="password" name="password">
+    </div>
+    <div>
+      <button type="submit">Reset Password</button>
+    </div>
+  </form>
+</body>
+</html>
